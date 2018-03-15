@@ -26,8 +26,8 @@ HEADERS = {
     'user-agent': ('Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 '
                    '(KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36')
 }
-first_page = 2
-last_page = 3
+first_page = 1
+last_page = 7180
 for i_ii in range(first_page, last_page + 1):
     clean_review_urls = pickle.load(open("urls/raw_pages" + str(i_ii) + ".p", "rb"))
 
