@@ -57,4 +57,4 @@ for mrow in my_array:
 df = pd.DataFrame(array_of_dic)
 df.head()
 
-df.to_csv("pandas_data.csv",sep="\t")
+df.to_csv("pandas_data.csv", sep='\t', encoding='utf-8')
