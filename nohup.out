@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "get_reviews.py", line 60, in <module>
+    pickle.dump(raw_review_pages, open("reviews/raw_pages" + str(i_ii) + ".p", "wb"))
+RecursionError: maximum recursion depth exceeded while pickling an object
