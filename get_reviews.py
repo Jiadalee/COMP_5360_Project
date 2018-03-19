@@ -74,8 +74,8 @@ HEADERS = {
     'user-agent': ('Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 '
                    '(KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36')
 }
-first_page =2100
-last_page = 2699
+first_page =6360
+last_page = 6369
 for i_ii in range(first_page, last_page + 1):
     my_files = glob.glob("bad_urls/*.p")
     if "bad_urls/url_"+str(i_ii)+".p" not in my_files:
