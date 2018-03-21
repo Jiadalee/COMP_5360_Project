@@ -11,52 +11,117 @@ import time
 import pandas as pd
 import scipy as sc
 import numpy as np
-
+import glob
 import statsmodels.formula.api as sm
 
 import matplotlib.pyplot as plt
 import sys
-sys.setrecursionlimit(10000)
 
-#path = "C:\\Users\\olsen\\Desktop\\COMP_5360_Project\\"
-#os.chdir(path)
+df = pd.read_csv('not_picked.csv')
+all_urls = df.x.values.tolist()
+
+box_number = 1
+
+
+def write_my_file(i, raw_review_pages):
+    file = open("reviews/url_" + str(i) + ".txt", "w")
+    x = raw_review_pages
+    url_i = x[0]
+    title = x[1]
+    points = x[2]
+    description = x[3]
+    taster = x[8]
+    primary_info_label = x[4]
+    primary_info = x[5]
+    secondary_info_label = x[6]
+    secondary_info = x[7]
+    file.write(str(url_i).replace('\n', '').replace('\t', ''))
+    file.write("\t")
+    file.write(str(title).replace('\n', '').replace('\t', ''))
+    file.write("\t")
+    file.write(str(points).replace('\n', '').replace('\t', ''))
+    file.write("\t")
+    file.write(str(description).replace('\n', '').replace('\t', ''))
+    file.write("\t")
+    file.write(str(taster).replace('\n', '').replace('\t', ''))
+    file.write("\t")
+    for y, z in zip(primary_info_label, primary_info):
+        file.write(str(y).replace('\n', '').replace('\t', '').replace('<span>', '').replace('</span>', ''))
+        file.write("||||")
+        z = str(z).replace('\n', '').replace('\t', '')
+        z = re.sub(r"<.+?>", "", z)
+        file.write(z)
+        file.write("\t")
+    for y, z in zip(secondary_info_label, secondary_info):
+        y = str(y).replace('\n', '').replace('\t', '').replace('<span>', '').replace('</span>', '')
+        if y != "User Avg Rating":
+            file.write(str(y).replace('\n', '').replace('\t', '').replace('<span>', '').replace('</span>', ''))
+            file.write("||||")
+            z = str(z).replace('\n', '').replace('\t', '')
+            z = re.sub(r"<.+?>", "", z)
+            file.write(z)
+            file.write("\t")
+    file.write("\n")
+    file.close()  
+# path = "C:\\Users\\olsen\\Desktop\\COMP_5360_Project\\"
+# os.chdir(path)
 
 session = requests.Session()
 HEADERS = {
     'user-agent': ('Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 '
                    '(KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36')
 }
-first_page =53
-last_page = 7180
+first_page = box_number * 7000 - 7000
+last_page = box_number * 7000
 for i_ii in range(first_page, last_page + 1):
-    clean_review_urls = pickle.load(open("urls/raw_pages" + str(i_ii) + ".p", "rb"))
-
-    raw_review_pages = []
-    bad_reviews_urls = []
-    for url_i in clean_review_urls:
-        time_from_request = time.time()
+    
+    time_from_request = time.time()
+    my_files = glob.glob("reviews/*.txt")
+    if "reviews/url_" + str(i_ii) + ".txt" not in my_files and "reviews\\url_" + str(i_ii) + ".txt" not in my_files :
+        url_i = all_urls[i_ii]
         try:
             response = session.get(url_i, headers=HEADERS)
             soup_review_page = BeautifulSoup(response.content, 'html.parser')
             structure_reviews = []
-
-            title = soup_review_page.select(".heading-area .article-title")[0].text
-            points = soup_review_page.select(".rating #points")[0].text
-            description = soup_review_page.select(".description")[0].text
-            primary_info_label = soup_review_page.select(".primary-info .row .info-label span")
-            primary_info = soup_review_page.select(".primary-info .row .info")
-            secondary_info_label = soup_review_page.select(".secondary-info .row .info-label span")
-            secondary_info = soup_review_page.select(".secondary-info .row .info")
-            taster = soup_review_page.select(".taster .name")[0].text
-            structure_reviews.append([url_i, title, points, description, primary_info_label,
+            try:
+                title = soup_review_page.select(".heading-area .article-title")[0].text
+            except:
+                title = None
+            try:
+                points = soup_review_page.select(".rating #points")[0].text
+            except:
+                points = None
+            try:
+                description = soup_review_page.select(".description")[0].text
+            except:
+                description = None
+            try:
+                primary_info_label = soup_review_page.select(".primary-info .row .info-label span")
+            except:
+                primary_info_label = None
+            try:
+                primary_info = soup_review_page.select(".primary-info .row .info")
+            except:
+                primary_info = None
+            try:
+                secondary_info = soup_review_page.select(".secondary-info .row .info")
+            except:
+                secondary_info = None
+            try:
+                secondary_info_label = soup_review_page.select(".secondary-info .row .info-label span")
+            except:
+                secondary_info_label = None
+            try:
+                taster = soup_review_page.select(".taster .name")[0].text
+            except:
+                taster = None
+            print(i_ii)
+            structure_reviews=[url_i, title, points, description, primary_info_label,
                                       primary_info, secondary_info_label,
-                                      secondary_info, taster])
-            raw_review_pages.append(structure_reviews)
-        except:
-            bad_reviews_urls.append(url_i)
+                                      secondary_info, taster]
+            print(i_ii)
+            write_my_file(i_ii, structure_reviews)
+        except Exception as e:
+            print(str(e))
         if time.time() - time_from_request < 5:
             time.sleep(5.01 - (time.time() - time_from_request))
-
-    pickle.dump(raw_review_pages, open("reviews/raw_pages" + str(i_ii) + ".p", "wb"))
-    pickle.dump(bad_reviews_urls, open("bad_urls/url_" + str(i_ii) + ".p", "wb"))
-
