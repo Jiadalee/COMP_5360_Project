@@ -20,7 +20,7 @@ import sys
 df = pd.read_csv('not_picked.csv')
 all_urls = df.x.values.tolist()
 
-box_number = 1
+box_number = 7
 
 
 def write_my_file(i, raw_review_pages):
