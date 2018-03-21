@@ -20,7 +20,7 @@ import sys
 df = pd.read_csv('not_picked.csv')
 all_urls = df.x.values.tolist()
 
-box_number = 1
+box_number = 5
 
 
 def write_my_file(i, raw_review_pages):
@@ -71,8 +71,8 @@ HEADERS = {
     'user-agent': ('Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 '
                    '(KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36')
 }
-first_page = box_number * 7000 - 7000
-last_page = box_number * 7000
+first_page = 47400
+last_page = 47600
 for i_ii in range(first_page, last_page + 1):
     
     time_from_request = time.time()
